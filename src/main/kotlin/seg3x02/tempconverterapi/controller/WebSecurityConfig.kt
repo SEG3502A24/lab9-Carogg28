@@ -22,7 +22,7 @@ class WebSecurityConfig {
     @Throws(Exception::class)
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf { it.disable() } // Disable CSRF protection for stateless APIs
+            .csrf().disable() // Disable CSRF protection for stateless APIs
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers("/temperature-converter/**").hasRole("USER") // Restrict access to "USER" role
@@ -49,6 +49,13 @@ class WebSecurityConfig {
             .build()
 
         return InMemoryUserDetailsManager(user1, user2)
+    }
+    
+    @Bean
+    fun webSecurityCustomizer(): WebSecurityCustomizer {
+        return WebSecurityCustomizer { web: WebSecurity ->
+            web.ignoring()
+                .requestMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**","/vendor/**","/fonts/**") }
     }
 
     @Bean
